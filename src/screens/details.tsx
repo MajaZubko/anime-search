@@ -1,14 +1,17 @@
 import React, {FC, useEffect, useState} from 'react';
-import {SafeAreaView, StyleSheet, View} from 'react-native';
+import {SafeAreaView, StyleSheet, View, Text, ScrollView} from 'react-native';
 import {getResults} from '../api/api';
-import {RED} from '../constants/colors';
-import {DetailTitleCard} from '../components';
+import {CREAM, DARK_BLUE, RED} from '../constants/colors';
+import {BackButton, DetailTitleCard} from '../components';
 
 interface Props {
   route: any;
+  navigation: {
+    goBack: () => void;
+  };
 }
 
-const Details: FC<Props> = ({route}) => {
+const Details: FC<Props> = ({route, navigation}) => {
   const [animeData, setAnimeData] = useState<any>({});
 
   const fetchAnimeData = async () => {
@@ -28,11 +31,17 @@ const Details: FC<Props> = ({route}) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.innerContainer}>
+      <ScrollView style={styles.innerContainer}>
+        <BackButton goBack={() => navigation.goBack()} secondary />
         {Object.keys(animeData).length > 0 && (
-          <DetailTitleCard animeData={animeData} animeGenres={animeGenres} />
+          <View>
+            <DetailTitleCard animeData={animeData} animeGenres={animeGenres} />
+            <View style={styles.descriptionContainer}>
+              <Text style={styles.description}>{animeData.synopsis}</Text>
+            </View>
+          </View>
         )}
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };
@@ -46,5 +55,15 @@ const styles = StyleSheet.create({
   },
   innerContainer: {
     padding: 20,
+  },
+  descriptionContainer: {
+    marginTop: 20,
+    padding: 10,
+    borderRadius: 10,
+    backgroundColor: DARK_BLUE,
+  },
+  description: {
+    color: CREAM,
+    lineHeight: 20,
   },
 });

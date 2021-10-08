@@ -1,18 +1,20 @@
-import React, {FC, useEffect, useState} from 'react';
+import React, {FC, useCallback, useEffect, useState} from 'react';
 import {View, Text, SafeAreaView, StyleSheet, TextInput} from 'react-native';
 import {stringify} from 'query-string';
 import {debounce} from 'lodash';
 import {CREAM, DARK_BLUE, YELLOW} from '../constants/colors';
 import {getResults} from '../api/api';
+import {BackButton} from '../components';
 
 interface Props {
   navigation: {
     navigate: (path: string, props?: any) => void;
+    goBack: () => void;
   };
 }
 
 const Search: FC<Props> = ({navigation}) => {
-  const [text, setText] = useState('Hello');
+  const [text, setText] = useState('');
   const [results, setResults] = useState<any[]>([]);
 
   const fetchSearchResults = async () => {
@@ -24,7 +26,7 @@ const Search: FC<Props> = ({navigation}) => {
     }
   };
 
-  const debouncedFetch = debounce(() => fetchSearchResults(), 300);
+  const debouncedFetch = debounce(() => fetchSearchResults(), 500);
 
   useEffect(() => {
     debouncedFetch();
@@ -34,8 +36,10 @@ const Search: FC<Props> = ({navigation}) => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.innerContainer}>
+        <BackButton goBack={() => navigation.goBack()} />
         <View style={styles.inputContainer}>
           <TextInput
+            placeholder="Search Anime"
             value={text}
             onChangeText={inputText => setText(inputText)}
             onFocus={() => setText('')}
